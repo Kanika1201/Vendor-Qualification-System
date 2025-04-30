@@ -28,7 +28,7 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - Python 3.9
 - FastAPI
@@ -40,7 +40,7 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 vendor-qualification-system/
@@ -57,7 +57,7 @@ vendor-qualification-system/
 
 ---
 
-## ▶️ API Usage
+## API Usage
 
 Start the app:
 
@@ -94,7 +94,7 @@ POST /vendor_qualification
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 Install pytest if not already:
 
@@ -112,7 +112,7 @@ Tests verify that the API responds correctly to example inputs.
 
 ---
 
-## 🐳 Docker Usage
+## Docker Usage
 
 ### 1. Build the Docker Image
 
