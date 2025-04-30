@@ -1,3 +1,16 @@
+'''
+model.py
+
+Contains the logic for:
+- Embedding vendor features and user queries using Sentence Transformers
+- Building and querying a FAISS index
+- Calculating final scores by combining similarity with vendor ratings
+
+Used by app.py to retrieve the top matching vendors based on semantic similarity.
+
+Author: Kanika Saxena
+'''
+
 from sentence_transformers import SentenceTransformer
 import faiss
 import pandas as pd
@@ -6,7 +19,7 @@ import numpy as np
 class VendorMatcher:
     def __init__(self, vendors_df):
         self.df = vendors_df
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')  # Small, fast model
+        self.model = SentenceTransformer('all-MiniLM-L6-v2') 
 
         self.df = self.df.reset_index(drop=True)
 

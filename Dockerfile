@@ -1,3 +1,10 @@
+# Dockerfile
+# Containerizes the FastAPI app with all dependencies.
+# Builds a portable image that can be run using:
+#   docker build -t vendor-qualification-system .
+#   docker run -d -p 8000:8000 vendor-qualification-system
+# Author: Kanika Saxena
+
 FROM python:3.9-slim
 
 WORKDIR /app
