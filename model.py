@@ -6,7 +6,7 @@ import numpy as np
 class VendorMatcher:
     def __init__(self, vendors_df):
         self.df = vendors_df
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')  # Small, fast model
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')  
 
         self.df = self.df.reset_index(drop=True)
 
@@ -16,7 +16,7 @@ class VendorMatcher:
         # Normalize embeddings for cosine similarity
         self.embeddings = self.embeddings / np.linalg.norm(self.embeddings, axis=1, keepdims=True)
 
-        # Build FAISS index using cosine similarity (Inner Product)
+        # Build FAISS index using cosine similarity 
         dimension = self.embeddings.shape[1]
         self.index = faiss.IndexFlatIP(dimension)
         self.index.add(self.embeddings)
@@ -38,7 +38,7 @@ class VendorMatcher:
         # Encode and normalize the query
         query_text = " ".join(capabilities)
         query_embedding = self.model.encode([query_text])
-        query_embedding = query_embedding / np.linalg.norm(query_embedding)  # Normalize query too
+        query_embedding = query_embedding / np.linalg.norm(query_embedding)  
 
         # Search for top matches
         D, I = faiss_index.search(query_embedding, top_k)
