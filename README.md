@@ -148,6 +148,47 @@ Works on any system with Docker installed.
 
 ---
 
+## Solution Architecture
+
+- `app.py`: FastAPI web application that exposes the `/vendor_qualification` endpoint.
+- `utils.py`: Handles data loading and preprocessing from the CSV file.
+- `model.py`: Builds and queries the FAISS index. Encodes both vendor features and user queries using Sentence Transformers.
+- `Dockerfile`: Packages the entire app with its dependencies for portable deployment.
+- `tests/`: Includes unit tests to validate API response behavior.
+
+### 🔁 Data Flow:
+
+1. On startup, the CSV is loaded, and vendor features are embedded using SBERT.
+2. A **FAISS index** is built for fast semantic search.
+3. When a POST request is received:
+   - The system filters vendors by category
+   - Embeds the user’s capabilities
+   - Uses FAISS to find the most similar vendors
+   - Applies a similarity threshold (≥ 0.6)
+   - Ranks the remaining vendors based on final score = 0.7 * similarity + 0.3 * rating
+4. Returns the **top 10 vendors** in ranked order via the API.
+
+---
+
+## How It Works
+
+1. Load software vendor data from CSV
+2. Parse the feature column into a searchable format
+3. Use **Sentence Transformers** (`all-MiniLM-L6-v2`) to embed features
+4. Build a **FAISS index** to enable fast semantic search
+5. At query time:
+   - Filter vendors by category
+   - Compute similarity between user query and vendor features
+   - Combine similarity score (70%) with vendor rating (30%) for ranking
+
+### 🔎 Why use a threshold of ≥ 0.6?
+
+I chose a similarity threshold of ≥ 0.6 because, in semantic vector space (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
+Lower thresholds (e.g., 0.4–0.5) returned weaker or irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
+0.6 struck a good balance during testing, ensuring vendors had at least one semantically relevant feature.
+
+---
+
 ## Challenges Faced
 
 Initially, I experimented with TF-IDF and cosine similarity for matching capabilities. But this approach produced low and misleading similarity scores, especially when different vendors described similar features with different words. Since TF-IDF relies on exact token overlap, semantically similar phrases like "Lead Tracking" and "Lead Management" scored poorly.
@@ -159,7 +200,7 @@ Another limitation is that the dataset provided contains only vendors under the 
 ---
 
 ## Potential Improvements
-
+If I am given more time to work on this project, I will implement the following functionality:
 - Add vector quantization (e.g., IVF, PQ) for large-scale vendor databases
 - Extend scoring logic with more metadata (pricing, integrations)
 - Add OpenAI or GPT-based reasoning to generate natural language recommendations (make it RAG!)
