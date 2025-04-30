@@ -1,7 +1,7 @@
 import pandas as pd
 import ast
 
-def load_data(filepath):
+def load_data(filepath): 
     df = pd.read_csv(filepath)
     df = df[['product_name', 'main_category', 'Features', 'rating']]
     df = df.dropna(subset=['Features'])
