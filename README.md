@@ -28,7 +28,7 @@ I have created a short demo video explaining the product. You can view it here:
 - `utils.py`: Handles data loading and preprocessing from the CSV file.
 - `model.py`: Builds and queries the FAISS index. Encodes both vendor features and user queries using Sentence Transformers.
 - `Dockerfile`: Packages the entire app with its dependencies for portable deployment.
-- `tests/`: Includes unit tests to validate API response behavior.
+- `test_app.py`: Includes unit tests to validate API response behavior.
 
 ### Data Flow:
 
