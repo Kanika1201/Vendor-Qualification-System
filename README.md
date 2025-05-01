@@ -42,7 +42,7 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ### Why use a threshold of ≥ 0.6?
 
-I chose a similarity threshold of ≥ 0.6 because, in semantic vectors (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
+I chose a similarity threshold of ≥ 0.6 because, in semantic vectors, values above 0.6 typically indicate strong contextual relevance.
 Lower thresholds (e.g., 0.4–0.5) returned weak and irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
 0.6 struck a good balance during testing, ensuring vendors had at least one semantically relevant feature.
 
@@ -52,7 +52,7 @@ Lower thresholds (e.g., 0.4–0.5) returned weak and irrelevant matches, and hig
 
 - Python 3.9
 - FastAPI
-- Sentence Transformers
+- Sentence Transformers - all-MiniLM-L6-v2
 - FAISS (Facebook AI Similarity Search)
 - Pandas
 - Docker
