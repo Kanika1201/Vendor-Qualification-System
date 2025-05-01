@@ -169,17 +169,6 @@ Works on any system with Docker installed.
 
 ---
 
-## How It Works
-
-1. Load software vendor data from CSV
-2. Parse the feature column into a searchable format
-3. Use **Sentence Transformers** (`all-MiniLM-L6-v2`) to embed features
-4. Build a **FAISS index** to enable fast semantic search
-5. At query time:
-   - Filter vendors by category
-   - Compute similarity between user query and vendor features
-   - Combine similarity score (70%) with vendor rating (30%) for ranking
-
 ### 🔎 Why use a threshold of ≥ 0.6?
 
 I chose a similarity threshold of ≥ 0.6 because, in semantic vector space (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
