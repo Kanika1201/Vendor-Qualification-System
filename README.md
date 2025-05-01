@@ -49,10 +49,9 @@ vendor-qualification-system/
 ├── utils.py                # CSV loading and preprocessing
 ├── requirements.txt        # Python dependencies
 ├── Dockerfile              # Docker config
-├── vendors.csv             # Sample vendor data
+├── vendors.csv             # Sample vendor data CSV - renamed to vendors.csv
 ├── README.md               # Project documentation
-└── tests/
-    └── test_app.py         # Basic unit test
+└── test_app.py             # Tests
 ```
 
 ---
