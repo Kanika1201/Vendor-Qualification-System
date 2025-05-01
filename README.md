@@ -82,12 +82,12 @@ POST /vendor_qualification
 ```json
 [
   {
-    "product_name": "EspoCRM",
-    "similarity": 0.34,
-    "rating": 4.6,
-    "final_score": 0.51
-  },
-  ...
+    "product_name": "Efficy CRM",
+    "main_category": "CRM Software",
+    "rating": 4.5,
+    "final_score": 5.32,
+    "matched_features": ["Lead Management", "Email Marketing"]
+  }
 ]
 ```
 
@@ -164,7 +164,7 @@ Works on any system with Docker installed.
    - Embeds the user’s capabilities
    - Uses FAISS to find the most similar vendors
    - Applies a similarity threshold (≥ 0.6)
-   - Ranks the remaining vendors based on final score = 0.7 * similarity + 0.3 * rating
+   - Ranks the remaining vendors based on final score = (0.7 * similarity + 0.3 * rating )*10
 4. Returns the **top 10 vendors** in ranked order via the API.
 
 ---
