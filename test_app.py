@@ -37,7 +37,7 @@ def test_invalid_category():
     response = client.post(
         "/vendor_qualification",
         json={
-            "software_category": "Music",  # invalid category
+            "software_category": "Music",  
             "capabilities": ["Chords"]
         }
     )
@@ -57,5 +57,5 @@ def test_empty_capabilities():
     )
     assert response.status_code == 200
     data = response.json()
-    assert isinstance(data, list)
-    assert len(data) == 0 or all("final_score" in v for v in data)
+    assert isinstance(data, dict)
+    assert data.get("message") == "No vendors found matching the criteria."
