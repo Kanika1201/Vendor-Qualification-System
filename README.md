@@ -15,16 +15,36 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ---
 
-## How It Works
+## Solution Architecture
 
-1. Load software vendor data from CSV
-2. Parse the feature column into a searchable format
-3. Use **Sentence Transformers** (`all-MiniLM-L6-v2`) to embed features
-4. Build a **FAISS index** to enable fast semantic search
-5. At query time:
-   - Filter vendors by category
-   - Compute similarity between user query and vendor features
-   - Combine similarity score (70%) with vendor rating (30%) for ranking
+- `app.py`: FastAPI web application that exposes the `/vendor_qualification` endpoint.
+- `utils.py`: Handles data loading and preprocessing from the CSV file.
+- `model.py`: Builds and queries the FAISS index. Encodes both vendor features and user queries using Sentence Transformers.
+- `Dockerfile`: Packages the entire app with its dependencies for portable deployment.
+- `tests/`: Includes unit tests to validate API response behavior.
+
+### Data Flow:
+
+1. On startup, the CSV is loaded, and vendor features are embedded using SBERT.
+2. A **FAISS index** is built for fast semantic search.
+3. When a POST request is received:
+   - The system filters vendors by category
+   - Embeds the user’s capabilities
+   - Uses FAISS to find the most similar vendors
+   - Applies a similarity threshold (≥ 0.6)
+   - Ranks the remaining vendors based on final score = (0.7 * similarity + 0.3 * rating )*10
+   - The response also highlights the matched capabilities for each vendor. 
+4. Returns the **top 10 vendors** in ranked order via the API.
+*final_score* is a scaled score (out of 10) based on both semantic similarity and vendor rating.
+*matched_features* shows which of the requested capabilities were found in the vendor's feature set
+
+---
+
+### Why use a threshold of ≥ 0.6?
+
+I chose a similarity threshold of ≥ 0.6 because, in semantic vector space (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
+Lower thresholds (e.g., 0.4–0.5) returned weaker or irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
+0.6 struck a good balance during testing, ensuring vendors had at least one semantically relevant feature.
 
 ---
 
@@ -51,12 +71,15 @@ vendor-qualification-system/
 ├── Dockerfile              # Docker config
 ├── vendors.csv             # Sample vendor data CSV - renamed to vendors.csv
 ├── README.md               # Project documentation
+├── .gitignore              # Git ignore file for temp/cache/system files
 └── test_app.py             # Tests
 ```
 
 ---
 
 ## API Usage
+
+To run locally, we can use uvicorn:
 
 Start the app:
 
@@ -147,36 +170,6 @@ Works on any system with Docker installed.
 
 ---
 
-## Solution Architecture
-
-- `app.py`: FastAPI web application that exposes the `/vendor_qualification` endpoint.
-- `utils.py`: Handles data loading and preprocessing from the CSV file.
-- `model.py`: Builds and queries the FAISS index. Encodes both vendor features and user queries using Sentence Transformers.
-- `Dockerfile`: Packages the entire app with its dependencies for portable deployment.
-- `tests/`: Includes unit tests to validate API response behavior.
-
-### 🔁 Data Flow:
-
-1. On startup, the CSV is loaded, and vendor features are embedded using SBERT.
-2. A **FAISS index** is built for fast semantic search.
-3. When a POST request is received:
-   - The system filters vendors by category
-   - Embeds the user’s capabilities
-   - Uses FAISS to find the most similar vendors
-   - Applies a similarity threshold (≥ 0.6)
-   - Ranks the remaining vendors based on final score = (0.7 * similarity + 0.3 * rating )*10
-4. Returns the **top 10 vendors** in ranked order via the API.
-
----
-
-### 🔎 Why use a threshold of ≥ 0.6?
-
-I chose a similarity threshold of ≥ 0.6 because, in semantic vector space (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
-Lower thresholds (e.g., 0.4–0.5) returned weaker or irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
-0.6 struck a good balance during testing, ensuring vendors had at least one semantically relevant feature.
-
----
-
 ## Challenges Faced
 
 Initially, I experimented with TF-IDF and cosine similarity for matching capabilities. But this approach produced low and misleading similarity scores, especially when different vendors described similar features with different words. Since TF-IDF relies on exact token overlap, semantically similar phrases like "Lead Tracking" and "Lead Management" scored poorly.
@@ -188,9 +181,14 @@ Another limitation is that the dataset provided contains only vendors under the 
 ---
 
 ## Potential Improvements
-If I am given more time to work on this project, I will implement the following functionality:
-- Add vector quantization (e.g., IVF, PQ) for large-scale vendor databases
-- Extend scoring logic with more metadata (pricing, integrations)
-- Add OpenAI or GPT-based reasoning to generate natural language recommendations (make it RAG!)
-- Deploy to a cloud service (e.g., AWS EC2 + Docker)
-- Add simple frontend UI for category/capability selection
+If given more time, I will implement the following enhancements:
+
+ - Scalable Search with Vector Quantization: Incorporate advanced FAISS indexing strategies such as IVF (Inverted File Index) or PQ (Product Quantization) to efficiently handle large-scale vendor databases and enable faster similarity searches.
+
+ - Enhanced Scoring with Additional Metadata: I will extend the ranking logic by including other important vendor attributes such as pricing models, integration capabilities, or support options to provide more comprehensive and relevant recommendations.
+
+ - Natural Language Recommendations (RAG-style): I will integrate OpenAI/GPT-based language models to generate human-readable explanations for each recommendation. This would move the system closer to a Retrieval-Augmented Generation architecture and make the output more personalized.
+
+ - Cloud Deployment (e.g., AWS EC2 + Docker): I will deploy the project using Docker on a cloud platform like AWS EC2, or Render for real-time API access and easier demonstration in production-like environments.
+
+ - Frontend UI: I will create a lightweight web interface that allows users to select categories and capabilities via dropdowns or text input, and view results in a clean, interactive format. This will significantly improve usability for non-technical users.
