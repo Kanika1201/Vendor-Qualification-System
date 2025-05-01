@@ -25,16 +25,17 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ### Data Flow:
 
-1. On startup, the CSV is loaded, and vendor features are embedded using SBERT.
-2. A **FAISS index** is built for fast semantic search.
-3. When a POST request is received:
+1. On startup, the CSV is loaded and preprocessed
+2. Vendor features are embedded using sentence transformer.
+3. A **FAISS index** is built for fast semantic search.
+4. When a POST request is received:
    - The system filters vendors by category
    - Embeds the user’s capabilities
    - Uses FAISS to find the most similar vendors
    - Applies a similarity threshold (≥ 0.6)
    - Ranks the remaining vendors based on final score = (0.7 * similarity + 0.3 * rating )*10
    - The response also highlights the matched capabilities for each vendor. 
-4. Returns the **top 10 vendors** in ranked order via the API.
+5. Returns the **top 10 vendors** in ranked order via the API.
 *final_score* is a scaled score (out of 10) based on both semantic similarity and vendor rating.
 *matched_features* shows which of the requested capabilities were found in the vendor's feature set
 
@@ -42,8 +43,8 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ### Why use a threshold of ≥ 0.6?
 
-I chose a similarity threshold of ≥ 0.6 because, in semantic vector space (e.g., SBERT embeddings), values above 0.6 typically indicate strong contextual relevance.
-Lower thresholds (e.g., 0.4–0.5) returned weaker or irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
+I chose a similarity threshold of ≥ 0.6 because, in semantic vectors, values above 0.6 typically indicate strong contextual relevance.
+Lower thresholds (e.g., 0.4–0.5) returned weak and irrelevant matches, and higher ones (> 0.7) filtered out too many candidates.
 0.6 struck a good balance during testing, ensuring vendors had at least one semantically relevant feature.
 
 ---
@@ -52,7 +53,7 @@ Lower thresholds (e.g., 0.4–0.5) returned weaker or irrelevant matches, and hi
 
 - Python 3.9
 - FastAPI
-- Sentence Transformers
+- Sentence Transformers - all-MiniLM-L6-v2
 - FAISS (Facebook AI Similarity Search)
 - Pandas
 - Docker
@@ -176,19 +177,22 @@ Initially, I experimented with TF-IDF and cosine similarity for matching capabil
 
 I resolved this by switching to Sentence Transformers (SBERT) for semantic embeddings and FAISS for scalable vector similarity search, which gave me more meaningful results.
 
-Another limitation is that the dataset provided contains only vendors under the "CRM Software" category. This limited the diversity of the results and meant the system couldn't be fully tested across multiple software categories (e.g., ERP or Finance Software). My architecture, however, is fully extendable if more categories are added later.
+The Features column in the CSV was a nested JSON-like string that had to be parsed safely. Due to this, entries can cause evaluation errors due to malformed data or missing fields. I handled this using ast.literal_eval() with error catching and fallback logic to prevent crashes.
+
+Another limitation is that the dataset provided contains only vendors under the "CRM Software" category. This limited the diversity of the results and meant the system couldn't be fully tested across multiple software categories (e.g., ERP or Finance Software). My architecture, however, is fully extendable if more categories are added later. 
+The dataset also contained mostly highly rated vendors. This biased the ranking scores upward and reduced contrast. The model architecture, however, is prepared to scale and generalize if a larger and more varied dataset is used.
 
 ---
 
 ## Potential Improvements
 If given more time, I will implement the following enhancements:
 
- - Scalable Search with Vector Quantization: Incorporate advanced FAISS indexing strategies such as IVF (Inverted File Index) or PQ (Product Quantization) to efficiently handle large-scale vendor databases and enable faster similarity searches.
+ - Scalable Search with Vector Quantization: I will incorporate advanced FAISS indexing strategies such as IVF (Inverted File Index) or PQ (Product Quantization) to efficiently handle large-scale vendor databases and enable faster similarity searches.
 
- - Enhanced Scoring with Additional Metadata: I will extend the ranking logic by including other important vendor attributes such as pricing models, integration capabilities, or support options to provide more comprehensive and relevant recommendations.
+ - Enhanced Scoring with Additional Metadata: I will extend the ranking logic by including other important vendor attributes such as pricing models, integration capabilities, or support options to provide more relevant recommendations.
 
- - Natural Language Recommendations (RAG-style): I will integrate OpenAI/GPT-based language models to generate human-readable explanations for each recommendation. This would move the system closer to a Retrieval-Augmented Generation architecture and make the output more personalized.
+ - Natural Language Recommendations (RAG-style): I will integrate OpenAI/GPT-based language models to generate human-readable explanations for each recommendation. This would move the system closer to a Retrieval-Augmented Generation architecture.
 
  - Cloud Deployment (e.g., AWS EC2 + Docker): I will deploy the project using Docker on a cloud platform like AWS EC2, or Render for real-time API access and easier demonstration in production-like environments.
 
- - Frontend UI: I will create a lightweight web interface that allows users to select categories and capabilities via dropdowns or text input, and view results in a clean, interactive format. This will significantly improve usability for non-technical users.
+ - Frontend UI: I will create a web interface that allows users to select categories and capabilities via dropdowns or text input, and view results in an interactive format. This will significantly improve usability for non-technical users.

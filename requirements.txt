@@ -6,4 +6,3 @@ pydantic
 sentence-transformers
 faiss-cpu
 pytest
-Https
