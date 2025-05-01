@@ -25,16 +25,17 @@ This project implements a **Vendor Qualification System** that intelligently eva
 
 ### Data Flow:
 
-1. On startup, the CSV is loaded, and vendor features are embedded using SBERT.
-2. A **FAISS index** is built for fast semantic search.
-3. When a POST request is received:
+1. On startup, the CSV is loaded and preprocessed
+2. Vendor features are embedded using sentence transformer.
+3. A **FAISS index** is built for fast semantic search.
+4. When a POST request is received:
    - The system filters vendors by category
    - Embeds the user’s capabilities
    - Uses FAISS to find the most similar vendors
    - Applies a similarity threshold (≥ 0.6)
    - Ranks the remaining vendors based on final score = (0.7 * similarity + 0.3 * rating )*10
    - The response also highlights the matched capabilities for each vendor. 
-4. Returns the **top 10 vendors** in ranked order via the API.
+5. Returns the **top 10 vendors** in ranked order via the API.
 *final_score* is a scaled score (out of 10) based on both semantic similarity and vendor rating.
 *matched_features* shows which of the requested capabilities were found in the vendor's feature set
 
