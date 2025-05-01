@@ -14,6 +14,13 @@ This project implements a **Vendor Qualification System** that intelligently eva
 - REST API with interactive Swagger docs
 
 ---
+## **Demo Video:**
+
+I have created a short demo video explaining the product. You can view it here:
+
+[**Demo Video**](https://drive.google.com/file/d/1k3HDep_CmKylUQMyWTMMxthJu-JbFNe_/view?usp=sharing)
+
+---
 
 ## Solution Architecture
 
