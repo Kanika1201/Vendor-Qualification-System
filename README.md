@@ -73,6 +73,7 @@ vendor-qualification-system/
 ├── vendors.csv             # Sample vendor data CSV - renamed to vendors.csv
 ├── README.md               # Project documentation
 ├── .gitignore              # Git ignore file for temp/cache/system files
+├── Screenshots             # Screenshots of response
 └── test_app.py             # Tests
 ```
 
@@ -87,6 +88,7 @@ Start the app:
 ```bash
 uvicorn app:app --reload
 ```
+![Uvicorn_Command](Screenshots/uvicorn_command.png)
 
 Then open:  
 `http://localhost:8000/docs`
@@ -133,6 +135,8 @@ pytest
 
 Tests verify that the API responds correctly to example inputs.
 
+![Pytest Passed](Screenshots/pytest_passed.png)
+
 ---
 
 ## Docker Usage
@@ -148,6 +152,7 @@ docker build -t vendor-qualification-system .
 ```bash
 docker run -d -p 8000:8000 vendor-qualification-system
 ```
+![Docker_Command](Screenshots/docker_command.png)
 
 Then, Visit: `http://localhost:8000/docs`
 
