@@ -59,6 +59,9 @@ class VendorMatcher:
         matched_indices = [candidate_indices[idx] for idx in I.flatten()]
         matched_vendors = self.df.iloc[matched_indices].copy()
         matched_vendors['similarity'] = D.flatten()
+        matched_vendors['matched_features'] = matched_vendors['parsed_features'].apply(lambda x: self.extract_matched_features(x, capabilities)
+)
+
 
         # Compute final score combining similarity and rating
         matched_vendors['final_score'] = matched_vendors.apply(
@@ -67,7 +70,14 @@ class VendorMatcher:
         )
 
         return matched_vendors.sort_values(by='final_score', ascending=False)
-
+    
+    def extract_matched_features(self, vendor_text, query_features):
+        matches = []
+        for q in query_features:
+            if q.lower() in vendor_text.lower():
+                matches.append(q)
+        return matches
+    
     def compute_final_score(self, similarity, rating):
         normalized_rating = rating / 5.0 if pd.notna(rating) else 0.0
-        return 0.7 * similarity + 0.3 * normalized_rating
+        return (0.7* similarity + 0.3* normalized_rating)*10

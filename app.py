@@ -31,7 +31,7 @@ def vendor_qualification(query: Query):
     results = matcher.match(query.software_category, query.capabilities)
     if results.empty:
         return {"message": "No vendors found matching the criteria."}
-    return results[['product_name', 'main_category', 'rating', 'similarity', 'final_score']].head(10).to_dict(orient='records')
+    return results[['product_name', 'main_category', 'rating', 'final_score', 'matched_features']].head(10).to_dict(orient='records')
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5000)

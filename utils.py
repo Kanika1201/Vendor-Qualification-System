@@ -26,11 +26,15 @@ def extract_features(features_json):
         return ""
     try:
         features_list = ast.literal_eval(features_json)
-        extracted_features = []
+        extracted = []
         for item in features_list:
             if "features" in item:
-                extracted_features.extend([f['description'] for f in item['features'] if 'description' in f])
-        return " ".join(extracted_features)
+                for feature in item["features"]:
+                    name = feature.get("name", "")
+                    desc = feature.get("description", "")
+                    if name:
+                        extracted.append(name)
+        return " ".join(extracted)
     except Exception as e:
         print(f"Error parsing features: {e}")
         return ""
